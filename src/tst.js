@@ -1,97 +1,137 @@
-function getMaxNumber(arr) {
-  if (arr.length <= 2) return -1;
+function getMaxNumber(size) {
+  const matrix = [];
+  const maxIndex = size - 1;
+  let currentNumber = 1;
+  const maxNumber = size * size;
 
-  // let headIndex = 0;
-  // let tailIndex = arr.length - 1;
-
-  // let head = arr[headIndex];
-  // let tail = arr[tailIndex];
-
-  // let sum = 0;
-  // for (let i = 0; i <= arr.length - 1; i += 1) {
-  //   sum += arr[i];
-  // }
-
-  function sumAfterIndex(index) {
-    let sum = 0;
-    for (let i = index + 1; i <= arr.length - 1; i += 1) {
-      sum += arr[i];
+  function goAround(
+    topBorderIndex,
+    rightBorderIndex,
+    bottomBorderIndex,
+    leftBorderIndex
+  ) {
+    function goRight(rowIndex) {
+      for (let i = 0; i <= maxIndex; i += 1) {
+        if (!matrix[rowIndex][i]) {
+          matrix[rowIndex][i] = currentNumber;
+          currentNumber += 1;
+        }
+      }
     }
-    return sum;
-  }
-  function sumBeforeIndex(index) {
-    let sum = 0;
-    for (let i = 0; i <= index - 1; i += 1) {
-      sum += arr[i];
+
+    function goDown(rightColumnIndex) {
+      for (let row = 0; row <= maxIndex; row += 1) {
+        if (!matrix[row][rightColumnIndex]) {
+          matrix[row][rightColumnIndex] = currentNumber;
+          currentNumber += 1;
+        }
+      }
     }
-    return sum;
+
+    function goLeft(rowIndex) {
+      for (let i = 0; i <= maxIndex; i += 1) {
+        if (!matrix[rowIndex][size - i - 1]) {
+          matrix[rowIndex][size - i - 1] = currentNumber;
+          currentNumber += 1;
+        }
+      }
+    }
+
+    function goUp(leftColumnIndex) {
+      for (let i = 0; i <= maxIndex; i += 1) {
+        if (!matrix[size - 1 - i][leftColumnIndex]) {
+          matrix[size - 1 - i][leftColumnIndex] = currentNumber;
+          currentNumber += 1;
+        }
+      }
+    }
+
+    for (let lap = 1; lap <= 4; lap += 1) {
+      switch (lap) {
+        case 1:
+          goRight(topBorderIndex);
+          break;
+        case 2:
+          goDown(rightBorderIndex);
+          break;
+        case 3:
+          goLeft(bottomBorderIndex);
+          break;
+        case 4:
+          goUp(leftBorderIndex);
+          break;
+        default:
+          break;
+      }
+    }
   }
 
-  function compareSums(index) {
-    if (sumAfterIndex(index) === sumBeforeIndex(index)) return true;
-    return false;
+  // add sub arrays
+  for (let i = 0; i < size; i += 1) {
+    matrix[i] = [];
   }
 
-  // console.log(sumAfterIndex(5));
-  // console.log(sumBeforeIndex(5));
-  // console.log(compareSums(4));
-
-  for (let i = 0; i <= arr.length - 1; i += 1) {
-    if (compareSums(i)) return i;
+  for (let num = 0; currentNumber <= maxNumber; num += 1) {
+    goAround(num, maxIndex - num, maxIndex - num, num);
+    // for (let i = 0; i < size; i += 1) {
+    //   goRight(i);
+    // for (let j = 0; j < size; j += 1) {
+    // going right
+    // if (!matrix[i][j]) {
+    //   matrix[i][j] = currentNumber;
+    //   currentNumber += 1;
+    // }
+    // }
+    // }
   }
-  // if (head < tail) {
-  //   headIndex += 1;
-  //   head += arr[headIndex];
-  // } else if (head > tail) {
-  //   tailIndex -= 1;
-  //   tail += arr[tailIndex];
-  // }
-  // if (head === tail) return headIndex + 1;
-  // }
-  //  && head + tail < sum
-  // while (head !== tail && headIndex + tailIndex < arr.length) {
-  // increaseHeadOrTail();
-  // if (head < tail) {
-  //   headIndex += 1;
-  //   head += arr[headIndex];
-  // } else if (head > tail) {
-  //   tailIndex -= 1;
-  //   tail += arr[tailIndex];
-  // }
-  // }
-  // console.log(head, tail);
 
-  // if (head === tail) return headIndex + 1;
-
-  return -1;
+  return matrix;
 }
+console.table(getMaxNumber(5));
 
-// console.log(getMaxNumber([1, 2, 5, 3, 0])); // 2
-// console.log(getMaxNumber([2, 3, 9, 5])); // 2
-// console.log(getMaxNumber([1, 2, 3, 4, 5])); // -1
-// console.log(getMaxNumber([1, 1])); // -1
-// console.log(getMaxNumber([1, 2, 3, 4, 5, 6, 7, 8, 9])); // -1
-// console.log(getMaxNumber([])); // -1
-console.log(getMaxNumber([9, 2, -2, -7, -8, 2, -1, 6, -11])); // 5
+// function addBorders() {
+//   // add upper and right borders
+//   for (let i = 0; i < size; i += 1) {
+//     for (let j = 0; j < size; j += 1) {
+//       // Fill first row
+//       if (i === 0) {
+//         matrix[i][j] = j + 1;
+//         currentNumber += 1;
+//       }
 
-// function getMaxNumber(arr) {
-//   if (arr.length <= 2) return -1;
-
-//   let head = 0;
-//   let tail = 0;
-//   const isOdd = !!(arr.length % 2);
-//   const middleIndex = (arr.length - 1) / 2; // if length is odd
-
-//   for (let i = 0; i <= arr.length - 1; i += 1) {
-//     if (isOdd && i === middleIndex) return -1;
-
-//     if (i === 0 || arr.length % 2 !== 0) {
-//       head += arr[i];
-//       tail += arr[arr.length - 1 - i];
-//     } else if (head < tail) {
-//       head += arr[i];
+//       if (j === size - 1 && i !== 0) {
+//         matrix[i][j] = currentNumber;
+//         if (i !== size - 1 && j !== size) currentNumber += 1;
+//       }
 //     }
-//     if (head === tail) return i + 1;
 //   }
-//   return -1;
+
+//   // add bottom border
+//   for (let i = 0; i <= size - 1; i += 1) {
+//     matrix[size - 1][size - 1 - i] = currentNumber;
+//     currentNumber += 1;
+//   }
+
+//   // add left border
+//   const leftInLeftBorder = size - 2;
+//   for (let i = 0; i < leftInLeftBorder; i += 1) {
+//     matrix[leftInLeftBorder - i][0] = currentNumber;
+//     currentNumber += 1;
+//     // for (let j = 0; j < size; j += 1) {}
+//   }
 // }
+
+/**
+
+ *        [
+ *          [1, 2, 3],
+ *  3  =>   [8, 9, 4],
+ *          [7, 6, 5]
+ *        ]
+ *        [
+ *          [1,  2,  3,  4],
+ *  4  =>   [12, 13, 14, 5],
+ *          [11, 16, 15, 6],
+ *          [10, 9,  8,  7]
+ *        ]
+ */

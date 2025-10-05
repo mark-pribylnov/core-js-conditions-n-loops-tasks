@@ -322,8 +322,87 @@ function getBalanceIndex(arr) {
  *          [10, 9,  8,  7]
  *        ]
  */
-function getSpiralMatrix(/* size */) {
-  throw new Error('Not implemented');
+function getSpiralMatrix(size) {
+  const matrix = [];
+  const maxIndex = size - 1;
+  let currentNumber = 1;
+  const maxNumber = size * size;
+
+  (function addRows() {
+    for (let i = 0; i < size; i += 1) {
+      matrix[i] = [];
+    }
+  })();
+
+  function goAround(
+    topBorderIndex,
+    rightBorderIndex,
+    bottomBorderIndex,
+    leftBorderIndex
+  ) {
+    function goRight(rowIndex) {
+      for (let i = 0; i <= maxIndex; i += 1) {
+        if (!matrix[rowIndex][i]) {
+          matrix[rowIndex][i] = currentNumber;
+          currentNumber += 1;
+        }
+      }
+    }
+
+    function goDown(rightColumnIndex) {
+      for (let row = 0; row <= maxIndex; row += 1) {
+        if (!matrix[row][rightColumnIndex]) {
+          matrix[row][rightColumnIndex] = currentNumber;
+          currentNumber += 1;
+        }
+      }
+    }
+
+    function goLeft(rowIndex) {
+      for (let i = 0; i <= maxIndex; i += 1) {
+        if (!matrix[rowIndex][size - i - 1]) {
+          matrix[rowIndex][size - i - 1] = currentNumber;
+          currentNumber += 1;
+        }
+      }
+    }
+
+    function goUp(leftColumnIndex) {
+      for (let i = 0; i <= maxIndex; i += 1) {
+        if (!matrix[size - 1 - i][leftColumnIndex]) {
+          matrix[size - 1 - i][leftColumnIndex] = currentNumber;
+          currentNumber += 1;
+        }
+      }
+    }
+
+    for (let lap = 1; lap <= 4; lap += 1) {
+      switch (lap) {
+        case 1:
+          goRight(topBorderIndex);
+          break;
+        case 2:
+          goDown(rightBorderIndex);
+          break;
+        case 3:
+          goLeft(bottomBorderIndex);
+          break;
+        case 4:
+          goUp(leftBorderIndex);
+          break;
+        default:
+          break;
+      }
+    }
+  }
+
+  let lap = 0;
+  while (currentNumber < maxNumber + 1) {
+    goAround(lap, maxIndex - lap, maxIndex - lap, lap);
+    lap += 1;
+  }
+
+  return matrix;
 }
 
 /**

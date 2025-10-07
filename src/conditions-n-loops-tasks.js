@@ -512,8 +512,52 @@ function rotateMatrix(matrix) {
  *
  *
  */
-function sortByAsc(/* arr */) {
-  throw new Error('Not implemented');
+
+function sortByAsc(arr) {
+  function partition(array, startIndex, endIndex) {
+    const pivot = array[endIndex];
+    let finalPivotIndex = null;
+
+    let zoneBoundary = startIndex - 1;
+
+    const expandZone = () => {
+      zoneBoundary += 1;
+      return undefined;
+    };
+    const swap = (prison, innocent, prisoner) => {
+      const vehicle = prison[innocent];
+      const copyArr = prison;
+      copyArr[innocent] = prison[prisoner];
+      copyArr[prisoner] = vehicle;
+      return prison;
+    };
+
+    for (let explorer = startIndex; explorer <= endIndex; explorer += 1) {
+      if (array[explorer] < pivot) {
+        expandZone();
+        swap(array, zoneBoundary, explorer);
+      } else if (array[explorer] === pivot) {
+        expandZone(zoneBoundary);
+        swap(array, zoneBoundary, explorer);
+
+        finalPivotIndex = zoneBoundary;
+      }
+    }
+
+    return finalPivotIndex;
+  }
+
+  function quickSort(array, startIndex, endIndex) {
+    if (endIndex <= startIndex) return;
+
+    const pivotIndex = partition(array, startIndex, endIndex);
+
+    quickSort(array, startIndex, pivotIndex - 1);
+    quickSort(array, pivotIndex + 1, endIndex);
+  }
+
+  quickSort(arr, 0, arr.length - 1);
+  return arr;
 }
 
 /**

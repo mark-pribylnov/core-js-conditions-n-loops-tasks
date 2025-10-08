@@ -640,8 +640,85 @@ function shuffleChar(str, iterations) {
  * 321321   => 322113
  *
  */
-function getNearestBigger(/* number */) {
-  throw new Error('Not implemented');
+function getNearestBigger(number) {
+  function convertNumberToArray(num) {
+    const array = [];
+
+    function convert(n) {
+      if (n <= 9 && n >= -9) {
+        array.push(n);
+        return;
+      }
+
+      const lastDigit = n % 10;
+      const remainingDigits = Math.floor(n / 10);
+      array.push(lastDigit);
+
+      convert(remainingDigits);
+    }
+
+    convert(num);
+
+    return array.reverse();
+  }
+
+  const swap = (prison, innocentIndexOUT, prisonerIndexIN) => {
+    const vehicle = prison[innocentIndexOUT];
+    const copyArr = prison;
+    copyArr[innocentIndexOUT] = prison[prisonerIndexIN];
+    copyArr[prisonerIndexIN] = vehicle;
+    return innocentIndexOUT;
+  };
+  function getFirstDescending(array) {
+    const maxIndex = array.length - 1;
+
+    for (let i = 0; i <= maxIndex; i += 1) {
+      const lastItemIndex = maxIndex - i;
+      const firstItemIndex = lastItemIndex - 1;
+
+      const lastItem = array[lastItemIndex];
+      const firstItem = array[firstItemIndex];
+
+      if (firstItem < lastItem)
+        return { value: firstItem, index: firstItemIndex };
+    }
+    return false;
+  }
+  function getSmallestAscending(theLittle, array) {
+    const maxIndex = array.length - 1;
+
+    const littleIndex = theLittle.index;
+    const littleValue = theLittle.value;
+    const rightSideDigits = [];
+
+    for (let i = littleIndex + 1; i <= maxIndex; i += 1) {
+      if (array[i] > littleValue)
+        rightSideDigits.push({ value: array[i], index: i });
+    }
+
+    rightSideDigits.sort((a, b) => Number(a.value) - Number(b.value));
+
+    return rightSideDigits[0];
+  }
+  function sortTail(array, tailStartIndex) {
+    const tail = array.splice(tailStartIndex);
+    tail.sort((a, b) => a - b);
+    tail.map((el) => array.push(el));
+  }
+
+  const arr = convertNumberToArray(number);
+
+  if (!getFirstDescending(arr)) return number;
+
+  const firstDescendingOBJ = getFirstDescending(arr);
+  const smallestAscendingOBJ = getSmallestAscending(firstDescendingOBJ, arr);
+
+  const tailStartIndex =
+    swap(arr, firstDescendingOBJ.index, smallestAscendingOBJ.index) + 1;
+
+  sortTail(arr, tailStartIndex);
+
+  return Number(arr.join(''));
 }
 
 module.exports = {
